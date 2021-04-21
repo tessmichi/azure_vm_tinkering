@@ -92,7 +92,6 @@ resource "azurerm_network_interface" "myterraformnic" {
 }
 output "private_ip" {
     value = azurerm_network_interface.myterraformnic.private_ip_addresses
-    # replace ^ with foreach so we can get all of them
 }
 
 # Connect the security group to the network interface
@@ -137,18 +136,8 @@ resource "azurerm_storage_account" "mystorageaccount" {
     ]
 }
 
-# Create (and display) an SSH key
-resource "tls_private_key" "example_ssh" {
-  algorithm = "RSA"
-  rsa_bits = 4096
-}
-output "tls_private_key" {
-    value = tls_private_key.example_ssh.private_key_pem
-    sensitive = true
-}
-
 # Create virtual machine
-resource "azurerm_linux_virtual_machine" "myterraformvm" {
+resource "azurerm_windows_virtual_machine" "myterraformvm" {
     name                  = "myVM"
     location              = "westus2"
     resource_group_name   = azurerm_resource_group.myterraformgroup.name
@@ -158,25 +147,19 @@ resource "azurerm_linux_virtual_machine" "myterraformvm" {
     os_disk {
         name              = "myOsDisk"
         caching           = "ReadWrite"
-        storage_account_type = "Premium_LRS"
+        storage_account_type = "Standard_LRS"
     }
 
     source_image_reference {
-        publisher = "Canonical"
-        offer     = "UbuntuServer"
-        sku       = "18.04-LTS"
+        publisher = "MicrosoftWindowsServer"
+        offer     = "WindowsServer"
+        sku       = "2016-Datacenter"
         version   = "latest"
     }
 
     computer_name  = "myvm"
     admin_username = "azureuser"
     admin_password = var.ADMIN_PASSWORD
-    disable_password_authentication = false
-
-    admin_ssh_key {
-        username       = "azureuser"
-        public_key     = tls_private_key.example_ssh.public_key_openssh
-    }
 
     boot_diagnostics {
         storage_account_uri = azurerm_storage_account.mystorageaccount.primary_blob_endpoint
@@ -189,7 +172,6 @@ resource "azurerm_linux_virtual_machine" "myterraformvm" {
     depends_on = [
       azurerm_resource_group.myterraformgroup,
       azurerm_network_interface.myterraformnic,
-      tls_private_key.example_ssh,
       azurerm_storage_account.mystorageaccount
     ]
 }
