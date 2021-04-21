@@ -6,7 +6,7 @@ provider "azurerm" {
 }
 
 resource "azurerm_resource_group" "myterraformgroup" {
-    name     = "vm-test-boa-2"
+    name     = "vm-test-boa"
     location = "westus2"
 
     tags = {

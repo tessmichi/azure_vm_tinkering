@@ -145,8 +145,8 @@ output "tls_private_key" {
 
 # Create virtual machine
 resource "azurerm_linux_virtual_machine" "myterraformvm" {
-    name                  = "myVM2"
-    location              = "westus2"
+    name                  = "myVM"
+    location              = "westus"
     resource_group_name   = azurerm_resource_group.myterraformgroup.name
     network_interface_ids = [azurerm_network_interface.myterraformnic.id]
     size                  = "Standard_DS1_v2"
@@ -164,7 +164,7 @@ resource "azurerm_linux_virtual_machine" "myterraformvm" {
         version   = "latest"
     }
 
-    computer_name  = "myvm2"
+    computer_name  = "myvm"
     admin_username = "azureuser"
     admin_password = var.ADMIN_PASSWORD
     disable_password_authentication = false
