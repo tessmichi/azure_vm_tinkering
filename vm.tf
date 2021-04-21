@@ -75,7 +75,7 @@ resource "azurerm_network_interface" "myterraformnic" {
     ip_configuration {
         name                          = "myNicConfiguration"
         subnet_id                     = azurerm_subnet.myterraformsubnet.id
-        private_ip_address_allocation = "Dynamic"
+        private_ip_address_allocation = "Static"
         #public_ip_address_id          = azurerm_public_ip.myterraformpublicip.id
     }
 
@@ -89,6 +89,10 @@ resource "azurerm_network_interface" "myterraformnic" {
     ]
 
     # Exported: applied_dns_servers, id, internal_domain_suffix, mac_address, [private_ip_address, private_ip_addresses], virtual_machine_id
+}
+output "private_ip" {
+    value = azurerm_network_interface.myterraformnic.private_ip_addresses
+    # replace ^ with foreach so we can get all of them
 }
 
 # Connect the security group to the network interface
