@@ -1,9 +1,12 @@
-provider "azurerm" {
-  # The "feature" block is required for AzureRM provider 2.x.
-  # If you're using version 1.x, the "features" block is not allowed.
-  version = "~>2.0"
-  features {}
+terraform {
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "=2.52.0"
+    }
+  }
 }
+
 
 resource "azurerm_resource_group" "myterraformgroup" {
   name     = "vm-test-boa-dev"
@@ -12,6 +15,11 @@ resource "azurerm_resource_group" "myterraformgroup" {
   tags = {
     environment = "Terraform Demo"
   }
+}
+
+# Configure the Microsoft Azure Provider
+provider "azurerm" {
+  features {}
 }
 
 resource "azurerm_virtual_network" "myterraformnetwork" {
