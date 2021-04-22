@@ -14,7 +14,7 @@ resource "azurerm_subnet" "subnet_client" {
 # Create network interface on the subnet
 resource "azurerm_network_interface" "nic_client" {
   name                = "nic_client"
-  location            = "westus2"
+  location                 = var.location
   resource_group_name = azurerm_resource_group.myterraformgroup.name
 
   ip_configuration {
@@ -24,9 +24,7 @@ resource "azurerm_network_interface" "nic_client" {
     #public_ip_address_id          = azurerm_public_ip.myterraformpublicip.id
   }
 
-  tags = {
-    environment = "Terraform Demo"
-  }
+  tags = var.tags
 
   depends_on = [
     azurerm_resource_group.myterraformgroup,
@@ -54,13 +52,11 @@ resource "azurerm_network_interface_security_group_association" "nsg2nic_client"
 resource "azurerm_storage_account" "storage_client" {
   name                     = "cdiag${random_id.randomId.hex}"
   resource_group_name      = azurerm_resource_group.myterraformgroup.name
-  location                 = "westus2"
+  location                 = var.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
-  tags = {
-    environment = "Terraform Demo"
-  }
+  tags = var.tags
 
   depends_on = [
     azurerm_resource_group.myterraformgroup
@@ -73,7 +69,7 @@ resource "azurerm_windows_virtual_machine" "vm_client" {
   location              = azurerm_network_interface.nic_client.location
   resource_group_name   = azurerm_resource_group.myterraformgroup.name
   network_interface_ids = [azurerm_network_interface.nic_client.id]
-  size                  = "Standard_DS1_v2"
+  size                  = "Standard_DS3_v2"
 
   os_disk {
     name                 = "myOsDiskClient"
@@ -84,21 +80,19 @@ resource "azurerm_windows_virtual_machine" "vm_client" {
   source_image_reference {
     publisher = "MicrosoftWindowsServer"
     offer     = "WindowsServer"
-    sku       = "2016-Datacenter"
+    sku       = "2019-Datacenter"
     version   = "latest"
   }
 
   computer_name  = "vmclient"
-  admin_username = "azureuser"
-  admin_password = var.ADMIN_PASSWORD
+  admin_username = var.admin_user
+  admin_password = var.admin_password
 
   boot_diagnostics {
     storage_account_uri = azurerm_storage_account.storage_client.primary_blob_endpoint
   }
 
-  tags = {
-    environment = "Terraform Demo"
-  }
+  tags = var.tags
 
   depends_on = [
     azurerm_resource_group.myterraformgroup,

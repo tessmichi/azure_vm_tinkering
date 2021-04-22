@@ -9,12 +9,10 @@ terraform {
 
 
 resource "azurerm_resource_group" "myterraformgroup" {
-  name     = "vm-test-boa-dev"
-  location = "westus2"
+  name     = var.resource_group_name
+  location = var.location
 
-  tags = {
-    environment = "Terraform Demo"
-  }
+  tags = var.tags
 }
 
 # Configure the Microsoft Azure Provider
@@ -25,12 +23,10 @@ provider "azurerm" {
 resource "azurerm_virtual_network" "myterraformnetwork" {
   name                = "myVnet"
   address_space       = ["10.0.0.0/16"]
-  location            = "westus2"
+  location = var.location
   resource_group_name = azurerm_resource_group.myterraformgroup.name
 
-  tags = {
-    environment = "Terraform Demo"
-  }
+  tags = var.tags
 
   depends_on = [
     azurerm_resource_group.myterraformgroup
@@ -40,7 +36,7 @@ resource "azurerm_virtual_network" "myterraformnetwork" {
 # Create Network Security Group and rule
 resource "azurerm_network_security_group" "myterraformnsg" {
   name                = "myNetworkSecurityGroup"
-  location            = "westus2"
+  location = var.location
   resource_group_name = azurerm_resource_group.myterraformgroup.name
 
   security_rule {
@@ -55,9 +51,7 @@ resource "azurerm_network_security_group" "myterraformnsg" {
     destination_address_prefix = "*"
   }
 
-  tags = {
-    environment = "Terraform Demo"
-  }
+  tags = var.tags
 
   depends_on = [
     azurerm_resource_group.myterraformgroup
