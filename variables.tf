@@ -1,13 +1,12 @@
 variable "location" {
   type        = string
-  description = "westus"
-  default     = "westus"
+  description = "An Azure region that supports all object types that will use this variable as its region"
+  default     = "westus2"
 }
 
 variable "tags" {
-  description = "A map of the tags to use for the resources that are deployed"
   type        = map(string)
-
+  description = "A map of the tags to use for the resources that are deployed"
   default = {
     environment = "dev"
   }
@@ -16,7 +15,7 @@ variable "tags" {
 variable "resource_group_name" {
   type        = string
   description = "The VM tinkering resource by Tess/Jeff"
-  default     = "rg-tj-vm"
+  default     = "vm-test-boa-dev-combined"
 }
 
 variable "application_port" {
