@@ -85,8 +85,8 @@ resource "azurerm_windows_virtual_machine" "vm_client" {
   }
 
   computer_name  = "vmclient"
-  admin_username = "azureuser"
-  admin_password = var.ADMIN_PASSWORD
+  admin_username = var.admin_user
+  admin_password = var.admin_password
 
   boot_diagnostics {
     storage_account_uri = azurerm_storage_account.storage_client.primary_blob_endpoint
