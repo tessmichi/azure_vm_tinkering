@@ -1,0 +1,7 @@
+location = "westus2"
+tags = {
+    environment = "dev"
+}
+resource_group_name = "rg-vm-test-dev-tedistef-jeding"
+admin_user = "azureuser"
+admin_password = "something"

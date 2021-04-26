@@ -11,17 +11,35 @@ resource "azurerm_subnet" "subnet_server" {
   ]
 }
 
+resource "azurerm_public_ip" "serverPublicIP" {
+  name                = "serverPublicIP"
+  location            = var.location
+  resource_group_name = azurerm_resource_group.myterraformgroup.name
+  allocation_method   = "Dynamic"
+  domain_name_label   = "jefftessserver" # random_string.fqdn.result
+
+  tags = var.tags
+
+  # TODO set port
+}
+output "public_ip" {
+  value = azurerm_public_ip.serverPublicIP.ip_address
+}
+output "public_ip_fqdn" {
+  value = azurerm_public_ip.serverPublicIP.fqdn
+}
+
 # Create network interface on the subnet
 resource "azurerm_network_interface" "nic_server" {
   name                = "nic_server"
-  location                 = var.location
+  location            = var.location
   resource_group_name = azurerm_resource_group.myterraformgroup.name
 
   ip_configuration {
     name                          = "nicconfig_server"
     subnet_id                     = azurerm_subnet.subnet_server.id
     private_ip_address_allocation = "Dynamic"
-    #public_ip_address_id          = azurerm_public_ip.myterraformpublicip.id
+    public_ip_address_id          = azurerm_public_ip.serverPublicIP.id
   }
 
   tags = var.tags
@@ -35,6 +53,9 @@ resource "azurerm_network_interface" "nic_server" {
 }
 output "private_ip_server" {
   value = azurerm_network_interface.nic_server.private_ip_addresses
+}
+output "public_ip_server" {
+  value = azurerm_network_interface.nic_server.ip_configuration
 }
 
 # Connect the security group to the network interface
@@ -90,6 +111,10 @@ resource "azurerm_windows_virtual_machine" "vm_server" {
 
   boot_diagnostics {
     storage_account_uri = azurerm_storage_account.storage_server.primary_blob_endpoint
+  }
+
+  lifecycle {
+    prevent_destroy = true
   }
 
   tags = var.tags
