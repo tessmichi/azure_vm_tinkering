@@ -6,7 +6,6 @@ variable "location" {
 variable "tags" {
   type        = map(string)
   description = "A map of the tags to use for the resources that are deployed"
-
 }
 
 variable "resource_group_name" {
