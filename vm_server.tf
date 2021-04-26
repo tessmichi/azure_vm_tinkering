@@ -11,17 +11,26 @@ resource "azurerm_subnet" "subnet_server" {
   ]
 }
 
+resource "azurerm_public_ip" "serverPublicIP" {
+  name                = "myPublicIP"
+  location            = var.location
+  resource_group_name = azurerm_resource_group.myterraformgroup.name
+  allocation_method   = "Dynamic"
+
+  tags = var.tags
+}
+
 # Create network interface on the subnet
 resource "azurerm_network_interface" "nic_server" {
   name                = "nic_server"
-  location                 = var.location
+  location            = var.location
   resource_group_name = azurerm_resource_group.myterraformgroup.name
 
   ip_configuration {
     name                          = "nicconfig_server"
     subnet_id                     = azurerm_subnet.subnet_server.id
     private_ip_address_allocation = "Dynamic"
-    #public_ip_address_id          = azurerm_public_ip.myterraformpublicip.id
+    public_ip_address_id          = azurerm_public_ip.serverPublicIP.id
   }
 
   tags = var.tags
